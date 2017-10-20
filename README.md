@@ -50,6 +50,8 @@ sudo chmod -R g+r conf
 sudo chmod g+x conf
 
 sudo chown -R tomcat webapps/ work/ temp/ logs/
+
+sudo usermod -a -G tomcat userName
 ```
 
 Create service:
