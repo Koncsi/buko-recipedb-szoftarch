@@ -25,7 +25,7 @@ sudo service mongodb stop
 ### Tomcat 8.x
 Ubuntu intsall:
 
-First create a new tocat group:
+Install tomcat:
 ```
 sudo apt install tomcat8
 ```
