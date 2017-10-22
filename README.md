@@ -22,19 +22,19 @@ Stop MongoDB:
 sudo service mongodb stop
 ```
 
-### Tomcat 7.x
+### Tomcat 8.x
 Ubuntu intsall:
 
 First create a new tocat group:
 ```
-sudo apt install tomcat7
+sudo apt install tomcat8
 ```
 Change JDK directory(if needed):
 ```
-sudo nano /etc/default/tomcat7
+sudo nano /etc/default/tomcat8
 ```
 Create a users:
 ```
-sudo nano /etc/tomcat7/tomcat-users.xml
+sudo nano /etc/tomcat8/tomcat-users.xml
 ```
 
