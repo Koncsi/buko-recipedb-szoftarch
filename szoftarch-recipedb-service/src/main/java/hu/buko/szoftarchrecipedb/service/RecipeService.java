@@ -10,9 +10,9 @@ import java.util.List;
 @Service
 public class RecipeService {
 
+    @Autowired
     private RecipeRepository recipeRepository;
 
-    @Autowired
     public RecipeService(RecipeRepository recipeRepository) {
         this.recipeRepository = recipeRepository;
     }
@@ -25,5 +25,5 @@ public class RecipeService {
         recipeRepository.save(recipe);
     }
 
-    public void deleteRecipeById(Long id){recipeRepository.deleteById(id);}
+    public void deleteRecipeById(String id){recipeRepository.deleteById(id);}
 }

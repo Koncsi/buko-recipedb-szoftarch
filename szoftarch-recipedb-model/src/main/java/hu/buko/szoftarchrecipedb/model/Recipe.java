@@ -1,25 +1,27 @@
 package hu.buko.szoftarchrecipedb.model;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-@Entity
 @Data
-public class Recipe {
+public class Recipe{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    private String name;
-    private String description;
+    public String id;
+
+    public String name;
+    public String description;
 
     public Recipe(){}
 
-    public Recipe(String name, String description) {
+    public Recipe(String name, String description){
         this.name = name;
         this.description = description;
+    }
+
+    @Override
+    public String toString(){
+        return String.format(
+                "Recipe[id=%s, name='%s', description='%s']",
+                id, name, description);
     }
 }

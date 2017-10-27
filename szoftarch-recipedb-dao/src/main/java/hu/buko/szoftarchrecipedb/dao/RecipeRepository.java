@@ -1,7 +1,10 @@
 package hu.buko.szoftarchrecipedb.dao;
 
 import hu.buko.szoftarchrecipedb.model.Recipe;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import java.util.List;
 
-public interface RecipeRepository extends JpaRepository<Recipe, Long> {
+public interface RecipeRepository extends  MongoRepository<Recipe, String>{
+    void deleteById(String id);
+    List<Recipe> findAll();
 }
