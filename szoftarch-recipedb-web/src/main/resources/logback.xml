@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <logger name="org.springframework.web" level="DEBUG"/>
+    <appender name="RECIPEDB-APP-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>log/recipedb-application.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyyMMdd HH:mm:ss.SSS} %-5level %marker %logger{48} - %msg%n
+            </Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>log/archive_log/recipedb-application.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+    <appender name="RECIPEDB-SERVER-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>log/recipedb-server.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyyMMdd HH:mm:ss.SSS} %-5level %marker %logger{48} - %msg%n
+            </Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>log/archive_log/recipedb-server.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+    <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyyMMdd HH:mm:ss.SSS} %-5level %marker %logger{48} - %msg%n</pattern>
+        </layout>
+    </appender>
+
+    <logger name="hu.buko" level="debug" additivity="false">
+        <appender-ref ref="RECIPEDB-APP-LOG"/>
+    </logger>
+    <logger name="org.springframework.web" level="warn" additivity="false">
+        <appender-ref ref="RECIPEDB-SERVER-LOG"/>
+    </logger>
+
+
+</configuration>

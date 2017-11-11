@@ -11,6 +11,7 @@ public class Recipe{
     public String name;
     public String description;
 
+
     public Recipe(){}
 
     public Recipe(String name, String description){

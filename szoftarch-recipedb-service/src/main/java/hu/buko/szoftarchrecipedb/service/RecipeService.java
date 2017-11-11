@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RecipeService {
@@ -21,9 +22,15 @@ public class RecipeService {
         return recipeRepository.findAll();
     }
 
-    public void addRecipe(Recipe recipe){
+    public void addRecipe(Recipe recipe) {
         recipeRepository.save(recipe);
     }
 
-    public void deleteRecipeById(String id){recipeRepository.deleteById(id);}
+    public void deleteRecipeById(String id) {
+        recipeRepository.deleteById(id);
+    }
+
+    public Optional<Recipe> getRecipeById(String id) {
+        return recipeRepository.findById(id);
+    }
 }

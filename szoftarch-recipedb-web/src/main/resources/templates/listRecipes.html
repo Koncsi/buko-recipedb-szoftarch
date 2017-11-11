@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <meta charset="UTF-8">
@@ -14,12 +15,13 @@
             <td th:text="${recipe.id}">Recipe id</td>
             <td th:text="${recipe.name}">Recipe name</td>
             <td th:text="${recipe.description}">Recipe description</td>
-            <td>
+            <td sec:authorize="hasAuthority('ROLE_ADMIN')">
                 <a class="btn btn-danger" th:href="@{/deleteRecipe/{id}(id=${recipe.id})}"
                    th:text="Töröl"/>
             </td>
         </tr>
         </tbody>
     </table>
+</div>
 </body>
 </html>

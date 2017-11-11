@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+<div class="container text-center" style="padding:50px 0; width: 40%">
+    <div class="logo">Login</div>
+    <div class="login-form-1">
+        <form th:action="@{/login}" id="login-form" class="text-left" method="post">
+            <div class="login-form-main-message"></div>
+            <div class="main-login-form">
+                <div class="login-group">
+                    <div class="form-group">
+                        <label for="username" class="sr-only">Felhasználónév</label>
+                        <input type="text" class="form-control" id="username" name="username"
+                               placeholder="Felhasználónév">
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="sr-only">Jelszó</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Jelszó">
+                    </div>
+                </div>
+                <input value="Belépés" type="submit" class="btn btn-primary btn-lg btn-block"/>
+            </div>
+            <div class="etc-login-form">
+                <p>Új felhasználó? <a th:href="@{/signup}">Regisztráljon!</a></p>
+            </div>
+        </form>
+    </div>
+    <div class="login-form-main-message" th:if="${param.error}">
+        Érvénytelen felhasználónév vagy jelsző!
+    </div>
+    <div class="login-form-main-message" th:if="${param.logout}">
+        Sikeres kijelentkezés!
+    </div>
+</div>
+</body>
+</html>

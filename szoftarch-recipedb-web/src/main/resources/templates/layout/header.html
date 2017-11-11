@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <meta charset="UTF-8">
@@ -7,8 +8,21 @@
 </head>
 <body>
 <ol class="navbar-header nav navbar-nav">
-    <li><a href="#" th:href="@{/}">Receptek</a></li>
-    <li><a href="#" th:href="@{/addRecipe/}">Recept hozzáadása</a></li>
+    <li sec:authorize="hasAuthority('ROLE_USER')"><a href="#" th:href="@{/}">Receptek</a></li>
+    <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="#" th:href="@{/addRecipe/}">Recept hozzáadása</a></li>
+    <li>
+        <a href="/logout" class="btn btn-info btn-lg">
+            <span class="glyphicon glyphicon-log-out"></span>Kijelentkezés
+        </a>
+    </li>
 </ol>
+
+<div class="alert-danger row" th:if="${exception}" th:fragment="errorTemplate">
+    <p th:text="${exception.message}"></p>
+</div>
+<div class="alert alert-info row" th:if="${message}!=null">
+    <p th:text="${message}"></p>
+</div>
+
 </body>
 </html>
