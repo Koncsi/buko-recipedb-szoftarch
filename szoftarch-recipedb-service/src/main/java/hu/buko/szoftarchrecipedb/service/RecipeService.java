@@ -22,7 +22,19 @@ public class RecipeService {
         return recipeRepository.findAll();
     }
 
+    public List<Recipe> getAcceptedRecipes() {
+        return recipeRepository.findAllByPendingIsFalse();
+    }
+
+    public List<Recipe> getPendingRecipes() {
+        return recipeRepository.findAllByPendingIsTrue();
+    }
+
     public void addRecipe(Recipe recipe) {
+        recipeRepository.save(recipe);
+    }
+
+    public void updateRecipe(Recipe recipe) {
         recipeRepository.save(recipe);
     }
 

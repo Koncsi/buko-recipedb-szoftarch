@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
-    <logger name="org.springframework.web" level="DEBUG"/>
     <appender name="RECIPEDB-APP-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>log/recipedb-application.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -32,7 +33,7 @@ public class RecipeController {
     @GetMapping(value = "/")
     public String listRecipes(Model model) {
         logger.debug("listRecipes called");
-        model.addAttribute("recipes", recipeService.getAllRecipes());
+        model.addAttribute("recipes", recipeService.getAcceptedRecipes());
         return "listRecipes";
     }
 
@@ -49,19 +50,74 @@ public class RecipeController {
         return "redirect:/";
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @GetMapping(value = "/addRecipe")
     public String initAddRecipePage(@ModelAttribute Recipe recipe) {
         return "addRecipe";
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_USER")
     @PostMapping(value = "/addRecipe")
     public String addRecipe(@ModelAttribute Recipe recipe, RedirectAttributes redirectAttributes) {
         logger.debug("addRecipe called");
+        recipe.setPending(true);
         recipeService.addRecipe(recipe);
-        logger.info("Recipe has been added: " + recipe.getName());
+        logger.info("Recipe has been added to pending list: " + recipe.getName());
         redirectAttributes.addFlashAttribute("message", recipe.getName() + " hozzáadva!");
-        return "addRecipe";
+        return "redirect:/addRecipe";
+    }
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping(value = "/pendingRecipes")
+    public String initPendingRecipesPage(Model model, RedirectAttributes redirectAttributes) {
+        List<Recipe> recipeList = recipeService.getPendingRecipes();
+        if (recipeList.isEmpty() && redirectAttributes.getFlashAttributes().get("message")==null) {
+            model.addAttribute("message", "Nincs függő recept!");
+        }
+        model.addAttribute("recipes", recipeList);
+        return "pendingRecipes";
+    }
+
+    @Secured("ROLE_ADMIN")
+    @PostMapping(value = "/pendingRecipes/accept/{id}")
+    public String acceptRecipe(@PathVariable String id, RedirectAttributes redirectAttributes) throws Exception {
+        logger.debug("acceptRecipe called");
+        Optional<Recipe> recipe = recipeService.getRecipeById(id);
+        if (!checkRecipePending(id, recipe, redirectAttributes)) {
+            return "redirect:/pendingRecipes";
+        }
+        recipe.get().setPending(false);
+        recipeService.updateRecipe(recipe.get());
+        redirectAttributes.addFlashAttribute("message", "Recept elfogadva: " + recipe.get().getName());
+        logger.info("Recept has been accepted: " + recipe.get().getName());
+        return "redirect:/pendingRecipes";
+    }
+
+    @Secured("ROLE_ADMIN")
+    @PostMapping(value = "/pendingRecipes/refuse/{id}")
+    public String refuseRecipe(Model model, @PathVariable String id, RedirectAttributes redirectAttributes) throws Exception {
+        logger.debug("refuseRecipe called");
+        Optional<Recipe> recipe = recipeService.getRecipeById(id);
+        if (!checkRecipePending(id, recipe, redirectAttributes)) {
+            return "redirect:/pendingRecipes";
+        }
+        recipeService.deleteRecipeById(id);
+        redirectAttributes.addFlashAttribute("message", "Recept elutasítva és törölve: " + recipe.get().getName());
+        logger.info("Recipe has been refused and deleted!");
+        return "redirect:/pendingRecipes";
+    }
+
+    private boolean checkRecipePending(String id, Optional<Recipe> recipe, RedirectAttributes redirectAttributes) {
+        if (!recipe.isPresent()) {
+            logger.error("No recipe is found with id: " + id);
+            redirectAttributes.addFlashAttribute("message", "Recept nem található!");
+            return false;
+        }
+        if (!recipe.get().isPending()) {
+            logger.error("Recipe has been already accepted!");
+            redirectAttributes.addFlashAttribute("message", "Recept már elfogadásra került egyszer!");
+            return false;
+        }
+        return true;
     }
 }

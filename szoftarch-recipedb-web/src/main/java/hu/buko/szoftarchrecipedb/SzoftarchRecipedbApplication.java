@@ -47,7 +47,6 @@ public class SzoftarchRecipedbApplication implements ApplicationRunner {
         }
 
         for (Recipe r : recipeService.getAllRecipes()) {
-//            System.out.println(r.toString());
             logger.debug(r.toString());
         }
 
@@ -57,7 +56,6 @@ public class SzoftarchRecipedbApplication implements ApplicationRunner {
         }
 
         for (RecipedbUser user : userService.getAllUsers()) {
-//            System.out.println(user.toString());
             logger.debug(user.toString());
         }
     }

@@ -7,22 +7,20 @@
     <title>Header</title>
 </head>
 <body>
-<ol class="navbar-header nav navbar-nav">
+<div class="container-fluid nav navbar-nav">
     <li sec:authorize="hasAuthority('ROLE_USER')"><a href="#" th:href="@{/}">Receptek</a></li>
-    <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="#" th:href="@{/addRecipe/}">Recept hozzáadása</a></li>
+    <li sec:authorize="hasAuthority('ROLE_USER')"><a href="#" th:href="@{/addRecipe}">Recept hozzáadása</a></li>
+    <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="#" th:href="@{/pendingRecipes}">Függő receptek</a></li>
     <li>
-        <a href="/logout" class="btn btn-info btn-lg">
-            <span class="glyphicon glyphicon-log-out"></span>Kijelentkezés
+        <span class="glyphicon glyphicon-user"></span> 
+        <span th:text="${#authentication.getPrincipal().getUsername()}">User</span>
+    </li>
+    <li>
+        <a href="/logout" class="btn btn-info btn-lg navbar-right">
+            <span class="glyphicon glyphicon-log-out">Kijelentkezés</span>
         </a>
     </li>
-</ol>
-
-<div class="alert-danger row" th:if="${exception}" th:fragment="errorTemplate">
-    <p th:text="${exception.message}"></p>
 </div>
-<div class="alert alert-info row" th:if="${message}!=null">
-    <p th:text="${message}"></p>
-</div>
-
+<div style="padding-top: 60px;" th:insert="layout/messageHeader :: body">messages</div>
 </body>
 </html>

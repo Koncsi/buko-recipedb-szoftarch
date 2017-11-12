@@ -40,6 +40,6 @@ public class LoginController {
         userService.addUser(userDTO.getUsername(), userDTO.getPassword());
         redirectAttributes.addFlashAttribute("message", "Sikeres regisztráció!");
         logger.debug("Successful sign up " + userDTO.getUsername());
-        return "login";
+        return "redirect:/login";
     }
 }

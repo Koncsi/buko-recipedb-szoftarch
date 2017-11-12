@@ -37,6 +37,9 @@
     <div class="login-form-main-message" th:if="${param.logout}">
         Sikeres kijelentkezés!
     </div>
+    <div class="login-form-main-message" th:if="${message}!=null">
+        <p th:text="${message}">message</p>
+    </div>
 </div>
 </body>
 </html>
