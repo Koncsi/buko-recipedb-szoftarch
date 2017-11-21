@@ -10,6 +10,7 @@
 <div class="container-fluid nav navbar-nav">
     <li sec:authorize="hasAuthority('ROLE_USER')"><a href="#" th:href="@{/}">Receptek</a></li>
     <li sec:authorize="hasAuthority('ROLE_USER')"><a href="#" th:href="@{/addRecipe}">Recept hozzáadása</a></li>
+    <li sec:authorize="hasAuthority('ROLE_USER')"><a href="#" th:href="@{/ingredients}">Lehetséges hozzávalók</a></li>
     <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="#" th:href="@{/pendingRecipes}">Függő receptek</a></li>
     <li>
         <span class="glyphicon glyphicon-user"></span> 

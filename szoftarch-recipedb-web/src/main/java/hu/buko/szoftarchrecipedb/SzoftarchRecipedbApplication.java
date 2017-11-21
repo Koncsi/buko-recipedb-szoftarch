@@ -1,7 +1,10 @@
 package hu.buko.szoftarchrecipedb;
 
+import hu.buko.szoftarchrecipedb.exception.IngredientNotFoundException;
+import hu.buko.szoftarchrecipedb.model.Ingredient;
 import hu.buko.szoftarchrecipedb.model.Recipe;
 import hu.buko.szoftarchrecipedb.model.RecipedbUser;
+import hu.buko.szoftarchrecipedb.service.IngredientService;
 import hu.buko.szoftarchrecipedb.service.RecipeService;
 import hu.buko.szoftarchrecipedb.service.UserService;
 import org.slf4j.Logger;
@@ -16,6 +19,9 @@ import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 @EnableMongoRepositories
 @EntityScan
@@ -27,11 +33,13 @@ public class SzoftarchRecipedbApplication implements ApplicationRunner {
 
     private RecipeService recipeService;
     private UserService userService;
+    private IngredientService ingredientService;
 
     @Autowired
-    public SzoftarchRecipedbApplication(RecipeService recipeService, UserService userService) {
+    public SzoftarchRecipedbApplication(RecipeService recipeService, UserService userService, IngredientService ingredientService) {
         this.recipeService = recipeService;
         this.userService = userService;
+        this.ingredientService = ingredientService;
     }
 
     public static void main(String[] args) {
@@ -40,9 +48,28 @@ public class SzoftarchRecipedbApplication implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+
+        if (ingredientService.getAllIngredients().isEmpty()) {
+            ingredientService.addIngredient("vaj");
+            ingredientService.addIngredient("kenyér");
+        }
+
         if (recipeService.getAllRecipes().size() == 0) {
+            Map<Ingredient, Integer> ingredientIntegerMap = new HashMap<>();
+            try {
+                ingredientIntegerMap.put(ingredientService.getIngredientByname("vaj"), 10);
+            }
+            catch (IngredientNotFoundException e){
+                logger.info("vaj is already added");
+            }
+            try {
+                ingredientIntegerMap.put(ingredientService.getIngredientByname("kenyér"), 15);
+            }
+            catch (IngredientNotFoundException e){
+                logger.info("kenyér is already added");
+            }
             recipeService.addRecipe(new Recipe("Gulyás", "Finom"));
-            recipeService.addRecipe(new Recipe("Palacsinta", "Azis"));
+            recipeService.addRecipe(new Recipe("Vajas kenyér", "Azis"));
             recipeService.addRecipe(new Recipe("Pisztácia", "Nem is volt"));
         }
 
