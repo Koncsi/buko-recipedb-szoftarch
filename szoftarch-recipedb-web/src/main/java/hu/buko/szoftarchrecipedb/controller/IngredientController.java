@@ -31,7 +31,7 @@ public class IngredientController {
     public String initIngredientsPage(@ModelAttribute Ingredient ingredient, Model model) {
         logger.debug("initIngredientsPage called");
         model.addAttribute("ingredients", ingredientService.getAllIngredients());
-        return "/ingredients";
+        return "ingredients";
     }
 
     @Secured("ROLE_ADMIN")
