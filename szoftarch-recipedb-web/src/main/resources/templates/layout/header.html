@@ -7,21 +7,32 @@
     <title>Header</title>
 </head>
 <body>
-<div class="container-fluid nav navbar-nav">
-    <li sec:authorize="hasAuthority('ROLE_USER')"><a href="#" th:href="@{/}">Receptek</a></li>
-    <li sec:authorize="hasAuthority('ROLE_USER')"><a href="#" th:href="@{/addRecipe}">Recept hozzáadása</a></li>
-    <li sec:authorize="hasAuthority('ROLE_USER')"><a href="#" th:href="@{/ingredients}">Lehetséges hozzávalók</a></li>
-    <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="#" th:href="@{/pendingRecipes}">Függő receptek</a></li>
-    <li>
-        <span class="glyphicon glyphicon-user"></span> 
-        <span th:text="${#authentication.getPrincipal().getUsername()}">User</span>
-    </li>
-    <li>
-        <a href="/logout" class="btn btn-info btn-lg navbar-right">
-            <span class="glyphicon glyphicon-log-out">Kijelentkezés</span>
-        </a>
-    </li>
-</div>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">ReceptDB</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li sec:authorize="hasAuthority('ROLE_USER')"><a href="#" th:href="@{/}">Receptek</a></li>
+            <li sec:authorize="hasAuthority('ROLE_USER')"><a href="#" th:href="@{/addRecipe}">Recept hozzáadása</a></li>
+            <li sec:authorize="hasAuthority('ROLE_USER')"><a href="#" th:href="@{/ingredients}">Lehetséges hozzávalók</a></li>
+            <li sec:authorize="hasAuthority('ROLE_ADMIN')"><a href="#" th:href="@{/pendingRecipes}">Függő receptek</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <!--<li>-->
+                <!--<a class="glyphicon glyphicon-user"></a> -->
+            <!--</li>-->
+            <li>
+                <a href="#" th:text=" ${#authentication.getPrincipal().getUsername()}"></a>
+            </li>
+            <li>
+                <a href="/logout">
+                    <span class="glyphicon glyphicon-log-out"> Kijelentkezés</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
 <div style="padding-top: 60px;" th:insert="layout/messageHeader :: body">messages</div>
 </body>
 </html>

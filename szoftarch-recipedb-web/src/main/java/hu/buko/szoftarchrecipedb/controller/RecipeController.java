@@ -1,5 +1,7 @@
 package hu.buko.szoftarchrecipedb.controller;
 
+import hu.buko.szoftarchrecipedb.model.Category;
+import hu.buko.szoftarchrecipedb.model.Ingredient;
 import hu.buko.szoftarchrecipedb.model.Recipe;
 import hu.buko.szoftarchrecipedb.service.RecipeService;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,10 +64,23 @@ public class RecipeController {
     public String addRecipe(@ModelAttribute Recipe recipe, RedirectAttributes redirectAttributes) {
         logger.debug("addRecipe called");
         recipe.setPending(true);
+        recipe.setCategories(categorizeRecipe(recipe));
         recipeService.addRecipe(recipe);
         logger.info("Recipe has been added to pending list: " + recipe.getName());
         redirectAttributes.addFlashAttribute("message", recipe.getName() + " hozzáadva!");
         return "redirect:/addRecipe";
+    }
+
+    @Secured("ROLE_USER")
+    @GetMapping(value = "/recipe/{id}")
+    public String addRecipe(@PathVariable String id, Model model) {
+        logger.debug("recipe called");
+        Optional<Recipe> recipe = recipeService.getRecipeById(id);
+        List<Recipe> similarRecipes = getSameCategoryRecipes(recipe.get());
+
+        model.addAttribute("recipe", recipe.get());
+        model.addAttribute("similars", similarRecipes);
+        return "recipe";
     }
 
     @Secured("ROLE_ADMIN")
@@ -119,5 +135,41 @@ public class RecipeController {
             return false;
         }
         return true;
+    }
+
+    /**
+     * TODO: Rendesen megcsinanli esetleg aszinkron hivast csinalni belole
+     * */
+    private List<Category> categorizeRecipe(Recipe recipe){
+        List<Category> categories = new ArrayList<>();
+        List<Ingredient> ingredients = recipe.getIngredients();
+
+        for(Ingredient ingredient : ingredients){
+            String ingredientName = ingredient.getName();
+            if(ingredientName.equals("Husi")){
+                categories.add(Category.HÚSÉTEL);
+            }
+            else if(ingredientName.equals("Teszta")){
+                categories.add(Category.TÉSZTAÉTEL);
+            }
+
+        }
+        if(categories.isEmpty()){
+            categories.add(Category.KATEGORIZÁLATLAN);
+        }
+
+        return categories;
+
+    }
+
+    private List<Recipe> getSameCategoryRecipes(Recipe recipe){
+        List<Recipe> sameCategory = new ArrayList<>();
+        for(Category category : recipe.getCategories()){
+            sameCategory.addAll(recipeService.getSameCategory(category));
+        }
+
+        sameCategory.remove(recipe);
+
+        return sameCategory;
     }
 }

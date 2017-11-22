@@ -1,6 +1,7 @@
 package hu.buko.szoftarchrecipedb.service;
 
 import hu.buko.szoftarchrecipedb.dao.RecipeRepository;
+import hu.buko.szoftarchrecipedb.model.Category;
 import hu.buko.szoftarchrecipedb.model.Recipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,4 +46,6 @@ public class RecipeService {
     public Optional<Recipe> getRecipeById(String id) {
         return recipeRepository.findById(id);
     }
+
+    public List<Recipe> getSameCategory(Category category){ return  recipeRepository.findByCategoriesAndPendingIsFalse(category);}
 }
