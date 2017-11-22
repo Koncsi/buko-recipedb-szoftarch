@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -168,7 +169,7 @@ public class RecipeController {
             sameCategory.addAll(recipeService.getSameCategory(category));
         }
 
-        sameCategory.remove(recipe);
+        sameCategory.removeAll(Collections.singleton(recipe));
 
         return sameCategory;
     }
