@@ -3,6 +3,7 @@ package hu.buko.szoftarchrecipedb.controller;
 import hu.buko.szoftarchrecipedb.model.Category;
 import hu.buko.szoftarchrecipedb.model.Ingredient;
 import hu.buko.szoftarchrecipedb.model.Recipe;
+import hu.buko.szoftarchrecipedb.service.CategorizerService;
 import hu.buko.szoftarchrecipedb.service.RecipeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class RecipeController {
@@ -27,9 +25,11 @@ public class RecipeController {
     private static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
 
     private RecipeService recipeService;
+    private CategorizerService categorizerService;
 
     @Autowired
-    public RecipeController(RecipeService recipeService) {
+    public RecipeController(RecipeService recipeService, CategorizerService categorizerService) {
+        this.categorizerService = categorizerService;
         this.recipeService = recipeService;
     }
 
@@ -75,8 +75,10 @@ public class RecipeController {
     public String addRecipe(@ModelAttribute Recipe recipe, RedirectAttributes redirectAttributes) {
         logger.debug("addRecipe called");
         recipe.setPending(true);
-        recipe.setCategories(categorizeRecipe(recipe));
+
+        recipe.setCategories(Arrays.asList(Category.UNKNOWN));
         recipeService.addRecipe(recipe);
+        categorizerService.categorize(recipe);
         logger.info("Recipe has been added to pending list: " + recipe.getName());
         redirectAttributes.addFlashAttribute("message", recipe.getName() + " hozzáadva!");
         return "redirect:/addRecipe";
@@ -148,37 +150,16 @@ public class RecipeController {
         return true;
     }
 
-    /**
-     * TODO: Rendesen megcsinanli esetleg aszinkron hivast csinalni belole
-     */
-    private List<Category> categorizeRecipe(Recipe recipe) {
-        List<Category> categories = new ArrayList<>();
-        List<Ingredient> ingredients = recipe.getIngredients();
-
-        for (Ingredient ingredient : ingredients) {
-            String ingredientName = ingredient.getName();
-            if (ingredientName.equals("Husi")) {
-                categories.add(Category.HÚSÉTEL);
-            } else if (ingredientName.equals("Teszta")) {
-                categories.add(Category.TÉSZTAÉTEL);
-            }
-
-        }
-        if (categories.isEmpty()) {
-            categories.add(Category.KATEGORIZÁLATLAN);
-        }
-
-        return categories;
-
-    }
-
     private List<Recipe> getSameCategoryRecipes(Recipe recipe) {
         List<Recipe> sameCategory = new ArrayList<>();
+        Set<Recipe> duplicationReducer = new HashSet<>();
+
         for (Category category : recipe.getCategories()) {
-            sameCategory.addAll(recipeService.getSameCategory(category));
+            duplicationReducer.addAll(recipeService.getSameCategory(category));
         }
 
-        sameCategory.removeAll(Collections.singleton(recipe));
+        duplicationReducer.removeAll(Collections.singleton(recipe));
+        sameCategory.addAll(duplicationReducer);
 
         return sameCategory;
     }
