@@ -99,13 +99,33 @@ public class RecipeController {
     public String addRecipe(@ModelAttribute Recipe recipe, RedirectAttributes redirectAttributes) {
         logger.debug("addRecipe called");
         recipe.setPending(true);
-
         recipe.setCategories(Arrays.asList(Category.UNKNOWN));
         recipeService.addRecipe(recipe);
         categorizerService.categorize(recipe);
         logger.info("Recipe has been added to pending list: " + recipe.getName());
         redirectAttributes.addFlashAttribute("message", recipe.getName() + " hozzáadva!");
         return "redirect:/addRecipe";
+    }
+
+    @Secured("ROLE_ADMIN")
+    @PostMapping(value = "/updateRecipe/{id}")
+    public String editRecipe(@ModelAttribute Recipe recipe, RedirectAttributes redirectAttributes) {
+        logger.debug("updateRecipe called");
+        recipe.setCategories(Arrays.asList(Category.UNKNOWN));
+        recipeService.updateRecipe(recipe);
+        categorizerService.categorize(recipe);
+        redirectAttributes.addFlashAttribute("message", recipe.getName() + " modositva!");
+        return "redirect:/";
+    }
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping(value = "/editRecipe/{id}")
+    public String editRecipe(@PathVariable String id, Model model) {
+        logger.debug("editRecipe called");
+        Optional<Recipe> recipe = recipeService.getRecipeById(id);
+        model.addAttribute("details", recipe.get());
+
+        return "editRecipe";
     }
 
     @Secured("ROLE_USER")

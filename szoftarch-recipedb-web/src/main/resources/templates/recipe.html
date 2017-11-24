@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <meta charset="UTF-8">
@@ -13,7 +13,15 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-3">
-        <h2 th:text="${recipe.name}">Recept</h2><br>
+        <table class="table" style="width:30%; float:left;">
+            <tr>
+                <td>
+                    <h2 th:text="${recipe.name}">Recept </h2>
+                    <a class="btn btn-warning" th:href="@{/editRecipe/{id}(id=${recipe.id})}"
+                       th:text="Módosítás" sec:authorize="hasAuthority('ROLE_ADMIN')"></a>
+                </td>
+            </tr>
+        </table>
     </div>
     <div class="col-md-6">
         <img th:src="@{/img/result.png}"/>
