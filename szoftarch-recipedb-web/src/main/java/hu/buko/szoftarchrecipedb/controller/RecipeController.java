@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
@@ -37,6 +34,7 @@ public class RecipeController {
     public String listRecipes(Model model) {
         logger.debug("listRecipes called");
         model.addAttribute("recipes", recipeService.getAcceptedRecipes());
+        model.addAttribute("categories", Category.values());
         return "listRecipes";
     }
 
@@ -45,7 +43,33 @@ public class RecipeController {
         logger.debug("searchRecipe called: " + namePart);
         List<Recipe> recipes = recipeService.getAcceptedRecipesLike(namePart);
         model.addAttribute("recipes", recipes);
-        model.addAttribute("searched", namePart);
+        model.addAttribute("categories", Category.values());
+        model.addAttribute("searchedByName", namePart);
+        if (recipes.isEmpty())
+            model.addAttribute("message", "Nem található ilyen recept!");
+        return "listRecipes";
+    }
+
+    @PostMapping(value = "/searchRecipe/ingredient/{ingredient}")
+    public String searchRecipeByIngredient(@PathVariable String ingredient, Model model) {
+        logger.debug("searchRecipeByIngredient called: " + ingredient);
+        List<Recipe> recipes = recipeService.getAcceptedRecipesWihtIngredient(ingredient);
+        model.addAttribute("recipes", recipes);
+        model.addAttribute("categories", Category.values());
+        model.addAttribute("searchedByIngredient", ingredient);
+        if (recipes.isEmpty())
+            model.addAttribute("message", "Nem található ilyen recept!");
+        return "listRecipes";
+    }
+
+    @PostMapping(value = "/searchRecipe/category/")
+    public String searchRecipeByCategory(@RequestParam String categoryName, Model model) {
+        logger.debug("searchRecipeByCategory called: " + categoryName);
+        String category = Category.from(categoryName).name();
+        List<Recipe> recipes = recipeService.getAcceptedRecipesWithCategory(category);
+        model.addAttribute("recipes", recipes);
+        model.addAttribute("categories", Category.values());
+        model.addAttribute("searchedByCategory", categoryName);
         if (recipes.isEmpty())
             model.addAttribute("message", "Nem található ilyen recept!");
         return "listRecipes";

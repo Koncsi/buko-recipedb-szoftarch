@@ -3,6 +3,8 @@ package hu.buko.szoftarchrecipedb.dao;
 import hu.buko.szoftarchrecipedb.model.Category;
 import hu.buko.szoftarchrecipedb.model.Recipe;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+
 import java.util.List;
 
 public interface RecipeRepository extends  MongoRepository<Recipe, String>{
@@ -11,5 +13,9 @@ public interface RecipeRepository extends  MongoRepository<Recipe, String>{
     List<Recipe> findAllByPendingIsTrue();
     List<Recipe> findAllByPendingIsFalse();
     List<Recipe> findAllByPendingIsFalseAndNameLike(String namePart);
+    @Query("{ 'ingredients.name' : {$regex : '^?0$', $options: 'i'}}")
+    List<Recipe> findAllByPendingIsFalseAndIngredientsContains(String ingredientPart);
+    @Query("{ 'categories' : ?0 }")
+    List<Recipe> findAllByCategoriesContains(String categoryName);
     List<Recipe> findByCategoriesAndPendingIsFalse(Category categorie);
 }

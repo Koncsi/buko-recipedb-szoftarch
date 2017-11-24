@@ -31,6 +31,14 @@ public class RecipeService {
         return recipeRepository.findAllByPendingIsFalseAndNameLike(namePart);
     }
 
+    public List<Recipe> getAcceptedRecipesWihtIngredient(String ingredientPart) {
+        return recipeRepository.findAllByPendingIsFalseAndIngredientsContains(ingredientPart);
+    }
+
+    public List<Recipe> getAcceptedRecipesWithCategory(String categoryName){
+        return recipeRepository.findAllByCategoriesContains(categoryName);
+    }
+
     public List<Recipe> getPendingRecipes() {
         return recipeRepository.findAllByPendingIsTrue();
     }

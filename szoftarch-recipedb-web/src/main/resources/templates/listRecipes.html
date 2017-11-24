@@ -10,8 +10,14 @@
 <body>
 <div th:insert="layout/header :: body">Header</div>
 <div class="container">
-    <div th:if="${searched}!=null">
-        Keresés: <span th:text="${searched}"></span>
+    <div th:if="${searchedByName}!=null">
+        Keresés név alapján: <span th:text="${searchedByName}"></span>
+    </div>
+    <div th:if="${searchedByIngredient}!=null">
+        Keresés hozzávaló alapján: <span th:text="${searchedByIngredient}"></span>
+    </div>
+    <div th:if="${searchedByCategory}!=null">
+        Keresés kategória alapján: <span th:text="${searchedByCategory}"></span>
     </div>
     <table class="table table-striped table-hover table-bordered">
         <tbody>
@@ -31,26 +37,68 @@
     <table class="table table-bordered">
         <tbody>
         <tr>
-            <form id = "form" action="#" th:action="@{/searchRecipe/}" method="post">
+            <td>
+                Keresés név alapján
+            </td>
+            <form id="form" action="#" th:action="@{/searchRecipe/}" method="post">
                 <td>
                     <input type="text" id="namePart"/>
                     <script
                             type="text/javascript">
-                        var $form = $( '#form' );
-                        var $namePartField = $( '#namePart' );
+                        var $form = $('#form');
+                        var namePartField = $('#namePart');
 
-                        $form.submit( function( event ) {
-
-                            // respects th:action="@{/mycontroller/}" and appends id
-                            $form.attr( 'action',  $form.attr('action') + $namePartField.val() );
-
+                        $form.submit(function (event) {
+                            $form.attr('action', $form.attr('action') + namePartField.val());
                         });
                     </script>
                 </td>
 
                 <td>
                     <input class="btn btn-info"
-                       value="Keresés" type="submit"/>
+                           value="Keresés" type="submit"/>
+                </td>
+            </form>
+        </tr>
+        <tr>
+            <td>
+                Keresés hozzávaló alapján
+            </td>
+            <form id="form2" action="#" th:action="@{/searchRecipe/ingredient/}" method="post">
+                <td>
+                    <input type="text" id="ingredient"/>
+                    <script
+                            type="text/javascript">
+                        var $form2 = $('#form2');
+                        var ingredient = $('#ingredient');
+
+                        $form2.submit(function (event) {
+                            $form2.attr('action', $form2.attr('action') + ingredient.val());
+                        });
+                    </script>
+                </td>
+
+                <td>
+                    <input class="btn btn-info"
+                           value="Keresés" type="submit"/>
+                </td>
+            </form>
+        </tr>
+        <tr>
+            <td>
+                Keresés kategória alapján
+            </td>
+            <form id="form3" action="#" th:action="@{/searchRecipe/category/}" method="post">
+                <td>
+                    <select class="btn btn-primary dropdown-toggle" data-toggle="dropdown" name="categoryName">
+                        <option th:each="category : ${categories}"
+                                th:value="${category}"
+                                th:text="${category}">Kategória
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <input type="submit" class="btn btn-info" value="Keresés"/>
                 </td>
             </form>
         </tr>
