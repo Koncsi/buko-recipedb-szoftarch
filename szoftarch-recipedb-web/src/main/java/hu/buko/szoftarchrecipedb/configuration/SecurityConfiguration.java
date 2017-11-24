@@ -52,13 +52,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/signup")
                 .permitAll()
                 .and()
-                .authorizeRequests()
-                .antMatchers("/listRecipes").hasRole("USER")
-                .and()
-                .authorizeRequests()
-                .anyRequest()
-                .authenticated()
-                .and()
                 .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login");
     }
 }

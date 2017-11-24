@@ -33,11 +33,21 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    @Secured("ROLE_USER")
     @GetMapping(value = "/")
     public String listRecipes(Model model) {
         logger.debug("listRecipes called");
         model.addAttribute("recipes", recipeService.getAcceptedRecipes());
+        return "listRecipes";
+    }
+
+    @PostMapping(value = "/searchRecipe/{namePart}")
+    public String searchRecipe(@PathVariable String namePart, Model model) {
+        logger.debug("searchRecipe called: " + namePart);
+        List<Recipe> recipes = recipeService.getAcceptedRecipesLike(namePart);
+        model.addAttribute("recipes", recipes);
+        model.addAttribute("searched", namePart);
+        if (recipes.isEmpty())
+            model.addAttribute("message", "Nem található ilyen recept!");
         return "listRecipes";
     }
 
@@ -88,7 +98,7 @@ public class RecipeController {
     @GetMapping(value = "/pendingRecipes")
     public String initPendingRecipesPage(Model model, RedirectAttributes redirectAttributes) {
         List<Recipe> recipeList = recipeService.getPendingRecipes();
-        if (recipeList.isEmpty() && redirectAttributes.getFlashAttributes().get("message")==null) {
+        if (recipeList.isEmpty() && redirectAttributes.getFlashAttributes().get("message") == null) {
             model.addAttribute("message", "Nincs függő recept!");
         }
         model.addAttribute("recipes", recipeList);
@@ -140,22 +150,21 @@ public class RecipeController {
 
     /**
      * TODO: Rendesen megcsinanli esetleg aszinkron hivast csinalni belole
-     * */
-    private List<Category> categorizeRecipe(Recipe recipe){
+     */
+    private List<Category> categorizeRecipe(Recipe recipe) {
         List<Category> categories = new ArrayList<>();
         List<Ingredient> ingredients = recipe.getIngredients();
 
-        for(Ingredient ingredient : ingredients){
+        for (Ingredient ingredient : ingredients) {
             String ingredientName = ingredient.getName();
-            if(ingredientName.equals("Husi")){
+            if (ingredientName.equals("Husi")) {
                 categories.add(Category.HÚSÉTEL);
-            }
-            else if(ingredientName.equals("Teszta")){
+            } else if (ingredientName.equals("Teszta")) {
                 categories.add(Category.TÉSZTAÉTEL);
             }
 
         }
-        if(categories.isEmpty()){
+        if (categories.isEmpty()) {
             categories.add(Category.KATEGORIZÁLATLAN);
         }
 
@@ -163,9 +172,9 @@ public class RecipeController {
 
     }
 
-    private List<Recipe> getSameCategoryRecipes(Recipe recipe){
+    private List<Recipe> getSameCategoryRecipes(Recipe recipe) {
         List<Recipe> sameCategory = new ArrayList<>();
-        for(Category category : recipe.getCategories()){
+        for (Category category : recipe.getCategories()) {
             sameCategory.addAll(recipeService.getSameCategory(category));
         }
 

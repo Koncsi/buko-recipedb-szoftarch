@@ -6,8 +6,8 @@
     <title>Message header</title>
 </head>
 <body>
-<div>
-    <div class="alert-danger alert" th:if="${exception}" th:fragment="errorTemplate">
+<div id="messageHeader">
+    <div id="exception" class="alert-danger alert" th:if="${exception}" th:fragment="errorTemplate">
         <p th:text="${exception.message}">exception</p>
     </div>
     <div class="alert alert-info" th:if="${message}!=null">

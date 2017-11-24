@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <title>Receptek</title>
@@ -9,18 +10,49 @@
 <body>
 <div th:insert="layout/header :: body">Header</div>
 <div class="container">
+    <div th:if="${searched}!=null">
+        Keresés: <span th:text="${searched}"></span>
+    </div>
     <table class="table table-striped table-hover table-bordered">
         <tbody>
         <tr th:each="recipe : ${recipes}">
             <td>
                 <a th:href="@{/recipe/{id}(id=${recipe.id})}"
-                   th:text="${recipe.name}" ></a>
+                   th:text="${recipe.name}"></a>
             </td>
 
             <td sec:authorize="hasAuthority('ROLE_ADMIN')">
                 <a class="btn btn-danger" th:href="@{/deleteRecipe/{id}(id=${recipe.id})}"
                    th:text="X"></a>
             </td>
+        </tr>
+        </tbody>
+    </table>
+    <table class="table table-bordered">
+        <tbody>
+        <tr>
+            <form id = "form" action="#" th:action="@{/searchRecipe/}" method="post">
+                <td>
+                    <input type="text" id="namePart"/>
+                    <script
+                            type="text/javascript">
+                        var $form = $( '#form' );
+                        var $namePartField = $( '#namePart' );
+
+                        $form.submit( function( event ) {
+
+                            // respects th:action="@{/mycontroller/}" and appends id
+                            $form.attr( 'action',  $form.attr('action') + $namePartField.val() );
+
+                        });
+                    </script>
+                </td>
+
+                <td>
+                    <input class="btn btn-info"
+                       value="Keresés" type="submit"/>
+                </td>
+            </form>
         </tr>
         </tbody>
     </table>

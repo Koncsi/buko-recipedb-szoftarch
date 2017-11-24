@@ -10,5 +10,6 @@ public interface RecipeRepository extends  MongoRepository<Recipe, String>{
     List<Recipe> findAll();
     List<Recipe> findAllByPendingIsTrue();
     List<Recipe> findAllByPendingIsFalse();
+    List<Recipe> findAllByPendingIsFalseAndNameLike(String namePart);
     List<Recipe> findByCategoriesAndPendingIsFalse(Category categorie);
 }

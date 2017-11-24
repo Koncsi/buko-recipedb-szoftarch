@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <meta charset="UTF-8">
     <title>Sign up</title>
 </head>
 <body>
+<div th:insert="layout/header :: body">Header</div>
 <div class="container text-center" style="padding:50px 0; width: 40%">
     <div class="logo">Regisztráció</div>
     <div class="login-form-1">
-        <form id="register-form" th:action="@{/signup}" method="post" th:object="${userDTO}">
+        <form id="register-form" th:action="@{/signup}" method="post"
+              th:object="${userDTO}">
             <div class="form-group">
                 <input type="text" name="username" id="username" tabindex="1" class="form-control"
                        placeholder="Felhasználónév" value="">
@@ -28,11 +31,29 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-sm-6 col-sm-offset-3">
-                        <input type="submit" name="register-submit" id="register-submit" tabindex="4"
+                        <input type="submit" name="register-submit" id="register-submit"
+                               tabindex="4"
                                class="form-control btn btn-register" value="Regisztrálok!">
                     </div>
                 </div>
             </div>
+            <div id="confError"></div>
+            <script type="text/javascript">
+                var $form = $('#register-form');
+                var $pw = $('#password');
+                var $cpw = $('#confirm-password');
+
+                $form.submit(function (event) {
+
+                    if ($pw.val() == $cpw.val())
+                        return;
+                    event.preventDefault();
+                    document.getElementById("messageHeader").innerHTML = "<div class=\"alert-danger alert\" th:if=\"${exception}\" th:fragment=\"errorTemplate\">\n" +
+                        "        <p th:text=\"${exception.message}\">Jelszó és jelszó megerősítésnek meg kell egyeznie!</p>\n" +
+                        "    </div>"
+                });
+            </script>
+
         </form>
     </div>
 </div>

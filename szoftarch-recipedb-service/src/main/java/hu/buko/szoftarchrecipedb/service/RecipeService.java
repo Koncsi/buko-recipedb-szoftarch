@@ -27,6 +27,10 @@ public class RecipeService {
         return recipeRepository.findAllByPendingIsFalse();
     }
 
+    public List<Recipe> getAcceptedRecipesLike(String namePart) {
+        return recipeRepository.findAllByPendingIsFalseAndNameLike(namePart);
+    }
+
     public List<Recipe> getPendingRecipes() {
         return recipeRepository.findAllByPendingIsTrue();
     }
@@ -47,5 +51,7 @@ public class RecipeService {
         return recipeRepository.findById(id);
     }
 
-    public List<Recipe> getSameCategory(Category category){ return  recipeRepository.findByCategoriesAndPendingIsFalse(category);}
+    public List<Recipe> getSameCategory(Category category) {
+        return recipeRepository.findByCategoriesAndPendingIsFalse(category);
+    }
 }
