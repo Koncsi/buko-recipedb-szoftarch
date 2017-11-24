@@ -26,15 +26,35 @@
             <tr>
                 <td>Hozzávalók</td>
             </tr>
+            <td><button type="button" id="addNew" class="btn btn-success">+</button></td>
             <tr th:each="ingredient, iter : ${details.ingredients}">
                 <td><input type="text" th:value="${ingredient.name}" th:id="${'ingredients' + iter.index + '.name'}" th:name="${'ingredients[' + iter.index + '].name'}"/></td>
                 <td><input type="text" th:value="${ingredient.quantity}" th:id="${'ingredients' + iter.index + '.quantity'}" th:name="${'ingredients[' + iter.index + '].quantity'}"/></td>
+                <td th:if="${iter.count>1}"><button type="button" id="rmRow" class="btn btn-danger">-</button></td>
             </tr>
+            <input id="iterCount" th:value="${#lists.size(details.ingredients)}" type="hidden"/>
             <tr id="dynamic">
                 <td colspan="3">
                     <input type="submit" class="btn btn-warning" value="Módosítás">
                 </td>
             </tr>
+            <script type="text/javascript">
+                $(function () {
+                    var table = $('#dynamic');
+                    var id = document.getElementById("iterCount").value;
+
+                    $('#addNew').live('click', function () {
+                        var ingr = '<tr><td><input type="text" name=' + "ingredients[" + id + "].name " + '/></td><td><input type="text" name=' + "ingredients[" + id + "].quantity " + '/><button type="button" id="rmRow" class="btn btn-danger">-</button></td></tr>'
+                        table.before($(ingr));
+                        id += 1;
+                    });
+
+                    $('#rmRow').live('click', function () {
+                        $(this).parent().parent().remove()
+                        id -= 1;
+                    })
+                });
+            </script>
 
         </table>
     </form>
