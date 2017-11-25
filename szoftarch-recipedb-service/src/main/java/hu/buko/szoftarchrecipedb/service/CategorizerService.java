@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class CategorizerService {
@@ -48,13 +49,14 @@ public class CategorizerService {
         boolean containsYeast = false;
 
         boolean containsPasta = false;
+        Stream<String> stream = Arrays.stream(pastaSearchTerms);
 
         for(Ingredient ingredient : recipe.getIngredients()){
             String ingredientName = ingredient.getName().toLowerCase();
             if(containsPasta)
                 break;
 
-            if(Arrays.stream(pastaSearchTerms).anyMatch(ingredientName::contains)){
+            if(stream.anyMatch(ingredientName::contains)){
                 containsPasta = true;
             }
             else if(ingredientName.contains(pastaStarterSearchTerms[0])){
@@ -71,12 +73,14 @@ public class CategorizerService {
                 containsPasta = true;
             }
         }
+        stream.close();
 
         return containsPasta;
     }
 
     private boolean isMeatDish(Recipe recipe){
         boolean containsMeat = false;
+        Stream<String> stream = Arrays.stream(meatSearchTerms);
 
         for(Ingredient ingredient : recipe.getIngredients()){
             String ingredientName = ingredient.getName().toLowerCase();
@@ -84,10 +88,13 @@ public class CategorizerService {
             if(containsMeat)
                 break;
 
-            if(Arrays.stream(meatSearchTerms).anyMatch(ingredientName::contains)){
+            if(stream.anyMatch(ingredientName::contains)){
                 containsMeat = true;
             }
         }
+
+        stream.close();
+
         return containsMeat;
     }
 
@@ -95,13 +102,14 @@ public class CategorizerService {
         boolean isSweetness = false;
         boolean containsSweetness = false;
         boolean containsMeat = isMeatDish(recipe);
+        Stream<String> stream = Arrays.stream(sweetnessSearchTerms);
 
         for(Ingredient ingredient : recipe.getIngredients()){
             String ingredientName = ingredient.getName().toLowerCase();
             if(isSweetness)
                 break;
 
-            if(Arrays.stream(sweetnessSearchTerms).anyMatch(ingredientName::contains)){
+            if(stream.anyMatch(ingredientName::contains)){
                 containsSweetness = true;
             }
 
@@ -109,6 +117,7 @@ public class CategorizerService {
                 isSweetness = true;
             }
         }
+        stream.close();
 
         return isSweetness;
     }
@@ -121,13 +130,14 @@ public class CategorizerService {
         boolean isSoup = false;
         boolean containsLiquid = false;
         boolean isSweetness = isSweetness(recipe);
+        Stream<String> stream = Arrays.stream(soupSearchTerms);
 
         for(Ingredient ingredient : recipe.getIngredients()){
             String ingredientName = ingredient.getName().toLowerCase();
             if(containsLiquid)
                 break;
 
-            if(Arrays.stream(soupSearchTerms).anyMatch(ingredientName::contains)){
+            if(stream.anyMatch(ingredientName::contains)){
                 containsLiquid = true;
             }
 
@@ -135,6 +145,7 @@ public class CategorizerService {
                 isSoup = true;
             }
         }
+        stream.close();
 
         return isSoup;
     }
