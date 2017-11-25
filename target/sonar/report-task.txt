@@ -1,0 +1,5 @@
+projectKey=hu.buko:szoftarch-recipedb
+serverUrl=http://localhost:9000
+dashboardUrl=http://localhost:9000/dashboard/index/hu.buko:szoftarch-recipedb
+ceTaskId=AV_0BuqZi8GTL82tpIMj
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AV_0BuqZi8GTL82tpIMj

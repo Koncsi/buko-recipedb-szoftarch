@@ -1,8 +1,6 @@
 package hu.buko.szoftarchrecipedb;
 
-import hu.buko.szoftarchrecipedb.model.Recipe;
 import hu.buko.szoftarchrecipedb.model.RecipedbUser;
-import hu.buko.szoftarchrecipedb.service.RecipeService;
 import hu.buko.szoftarchrecipedb.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +24,9 @@ public class SzoftarchRecipedbApplication implements ApplicationRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(SzoftarchRecipedbApplication.class);
 
-    private RecipeService recipeService;
     private UserService userService;
 
-    public SzoftarchRecipedbApplication(RecipeService recipeService, UserService userService) {
-        this.recipeService = recipeService;
+    public SzoftarchRecipedbApplication(UserService userService) {
         this.userService = userService;
     }
 

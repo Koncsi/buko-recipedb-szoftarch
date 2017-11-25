@@ -1,7 +1,7 @@
 package hu.buko.szoftarchrecipedb.controller;
 
+import hu.buko.szoftarchrecipedb.exception.PendingRecipeException;
 import hu.buko.szoftarchrecipedb.model.Category;
-import hu.buko.szoftarchrecipedb.model.Ingredient;
 import hu.buko.szoftarchrecipedb.model.Recipe;
 import hu.buko.szoftarchrecipedb.service.CategorizerService;
 import hu.buko.szoftarchrecipedb.service.RecipeService;
@@ -24,6 +24,11 @@ public class RecipeController {
     private RecipeService recipeService;
     private CategorizerService categorizerService;
 
+    private static final String RECIPES = "recipes";
+    private static final String CATEGORIES = "categories";
+    private static final String LISTRECIPES = "listRecipes";
+    private static final String MESSAGE = "message";
+
     @Autowired
     public RecipeController(RecipeService recipeService, CategorizerService categorizerService) {
         this.categorizerService = categorizerService;
@@ -33,33 +38,33 @@ public class RecipeController {
     @GetMapping(value = "/")
     public String listRecipes(Model model) {
         logger.debug("listRecipes called");
-        model.addAttribute("recipes", recipeService.getAcceptedRecipes());
-        model.addAttribute("categories", Category.values());
-        return "listRecipes";
+        model.addAttribute(RECIPES, recipeService.getAcceptedRecipes());
+        model.addAttribute(CATEGORIES, Category.values());
+        return LISTRECIPES;
     }
 
     @PostMapping(value = "/searchRecipe/{namePart}")
     public String searchRecipe(@PathVariable String namePart, Model model) {
         logger.debug("searchRecipe called: " + namePart);
         List<Recipe> recipes = recipeService.getAcceptedRecipesLike(namePart);
-        model.addAttribute("recipes", recipes);
-        model.addAttribute("categories", Category.values());
+        model.addAttribute(RECIPES, recipes);
+        model.addAttribute(CATEGORIES, Category.values());
         model.addAttribute("searchedByName", namePart);
         if (recipes.isEmpty())
-            model.addAttribute("message", "Nem található ilyen recept!");
-        return "listRecipes";
+            model.addAttribute(MESSAGE, "Nem található ilyen recept!");
+        return LISTRECIPES;
     }
 
     @PostMapping(value = "/searchRecipe/ingredient/{ingredient}")
     public String searchRecipeByIngredient(@PathVariable String ingredient, Model model) {
         logger.debug("searchRecipeByIngredient called: " + ingredient);
         List<Recipe> recipes = recipeService.getAcceptedRecipesWihtIngredient(ingredient);
-        model.addAttribute("recipes", recipes);
-        model.addAttribute("categories", Category.values());
+        model.addAttribute(RECIPES, recipes);
+        model.addAttribute(CATEGORIES, Category.values());
         model.addAttribute("searchedByIngredient", ingredient);
         if (recipes.isEmpty())
-            model.addAttribute("message", "Nem található ilyen recept!");
-        return "listRecipes";
+            model.addAttribute(MESSAGE, "Nem található ilyen hozzávalójú recept!");
+        return LISTRECIPES;
     }
 
     @PostMapping(value = "/searchRecipe/category/")
@@ -67,12 +72,12 @@ public class RecipeController {
         logger.debug("searchRecipeByCategory called: " + categoryName);
         String category = Category.from(categoryName).name();
         List<Recipe> recipes = recipeService.getAcceptedRecipesWithCategory(category);
-        model.addAttribute("recipes", recipes);
-        model.addAttribute("categories", Category.values());
+        model.addAttribute(RECIPES, recipes);
+        model.addAttribute(CATEGORIES, Category.values());
         model.addAttribute("searchedByCategory", categoryName);
         if (recipes.isEmpty())
-            model.addAttribute("message", "Nem található ilyen recept!");
-        return "listRecipes";
+            model.addAttribute(MESSAGE, "Nem található ilyen kategóriájú recept!");
+        return LISTRECIPES;
     }
 
     @Secured("ROLE_ADMIN")
@@ -84,7 +89,7 @@ public class RecipeController {
             logger.error("Recipe is not found: " + recipe.get().getName());
         }
         recipeService.deleteRecipeById(id);
-        redirectAttributes.addFlashAttribute("message", recipe.get().getName() + " törölve!");
+        redirectAttributes.addFlashAttribute(MESSAGE, recipe.get().getName() + " törölve!");
         return "redirect:/";
     }
 
@@ -103,7 +108,7 @@ public class RecipeController {
         recipeService.addRecipe(recipe);
         categorizerService.categorize(recipe);
         logger.info("Recipe has been added to pending list: " + recipe.getName());
-        redirectAttributes.addFlashAttribute("message", recipe.getName() + " hozzáadva!");
+        redirectAttributes.addFlashAttribute(MESSAGE, recipe.getName() + " hozzáadva!");
         return "redirect:/addRecipe";
     }
 
@@ -114,7 +119,7 @@ public class RecipeController {
         recipe.setCategories(Arrays.asList(Category.UNKNOWN));
         recipeService.updateRecipe(recipe);
         categorizerService.categorize(recipe);
-        redirectAttributes.addFlashAttribute("message", recipe.getName() + " modositva!");
+        redirectAttributes.addFlashAttribute(MESSAGE, recipe.getName() + " modositva!");
         return "redirect:/";
     }
 
@@ -124,7 +129,6 @@ public class RecipeController {
         logger.debug("editRecipe called");
         Optional<Recipe> recipe = recipeService.getRecipeById(id);
         model.addAttribute("details", recipe.get());
-
         return "editRecipe";
     }
 
@@ -145,15 +149,15 @@ public class RecipeController {
     public String initPendingRecipesPage(Model model, RedirectAttributes redirectAttributes) {
         List<Recipe> recipeList = recipeService.getPendingRecipes();
         if (recipeList.isEmpty() && redirectAttributes.getFlashAttributes().get("message") == null) {
-            model.addAttribute("message", "Nincs függő recept!");
+            model.addAttribute(MESSAGE, "Nincs függő recept!");
         }
-        model.addAttribute("recipes", recipeList);
+        model.addAttribute(RECIPES, recipeList);
         return "pendingRecipes";
     }
 
     @Secured("ROLE_ADMIN")
     @PostMapping(value = "/pendingRecipes/accept/{id}")
-    public String acceptRecipe(@PathVariable String id, RedirectAttributes redirectAttributes) throws Exception {
+    public String acceptRecipe(@PathVariable String id, RedirectAttributes redirectAttributes) throws PendingRecipeException {
         logger.debug("acceptRecipe called");
         Optional<Recipe> recipe = recipeService.getRecipeById(id);
         if (!checkRecipePending(id, recipe, redirectAttributes)) {
@@ -161,21 +165,21 @@ public class RecipeController {
         }
         recipe.get().setPending(false);
         recipeService.updateRecipe(recipe.get());
-        redirectAttributes.addFlashAttribute("message", "Recept elfogadva: " + recipe.get().getName());
+        redirectAttributes.addFlashAttribute(MESSAGE, "Recept elfogadva: " + recipe.get().getName());
         logger.info("Recept has been accepted: " + recipe.get().getName());
         return "redirect:/pendingRecipes";
     }
 
     @Secured("ROLE_ADMIN")
     @PostMapping(value = "/pendingRecipes/refuse/{id}")
-    public String refuseRecipe(Model model, @PathVariable String id, RedirectAttributes redirectAttributes) throws Exception {
+    public String refuseRecipe(@PathVariable String id, RedirectAttributes redirectAttributes) throws PendingRecipeException {
         logger.debug("refuseRecipe called");
         Optional<Recipe> recipe = recipeService.getRecipeById(id);
         if (!checkRecipePending(id, recipe, redirectAttributes)) {
             return "redirect:/pendingRecipes";
         }
         recipeService.deleteRecipeById(id);
-        redirectAttributes.addFlashAttribute("message", "Recept elutasítva és törölve: " + recipe.get().getName());
+        redirectAttributes.addFlashAttribute(MESSAGE, "Recept elutasítva és törölve: " + recipe.get().getName());
         logger.info("Recipe has been refused and deleted!");
         return "redirect:/pendingRecipes";
     }
@@ -183,12 +187,12 @@ public class RecipeController {
     private boolean checkRecipePending(String id, Optional<Recipe> recipe, RedirectAttributes redirectAttributes) {
         if (!recipe.isPresent()) {
             logger.error("No recipe is found with id: " + id);
-            redirectAttributes.addFlashAttribute("message", "Recept nem található!");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Recept nem található!");
             return false;
         }
         if (!recipe.get().isPending()) {
             logger.error("Recipe has been already accepted!");
-            redirectAttributes.addFlashAttribute("message", "Recept már elfogadásra került egyszer!");
+            redirectAttributes.addFlashAttribute(MESSAGE, "Recept már elfogadásra került egyszer!");
             return false;
         }
         return true;

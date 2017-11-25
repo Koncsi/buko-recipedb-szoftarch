@@ -22,7 +22,7 @@ public class RecipedbUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username){
         if (username == null)
             throw new UsernameNotFoundException("Username is null");
         Optional<RecipedbUser> user = userRepository.findByUsername(username);

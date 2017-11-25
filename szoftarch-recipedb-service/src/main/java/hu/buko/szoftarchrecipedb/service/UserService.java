@@ -46,7 +46,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public RecipedbUser getUserByUsername(String username) throws UsernameNotFoundException {
+    public RecipedbUser getUserByUsername(String username) {
         Optional<RecipedbUser> user = userRepository.findByUsername(username);
         if (!user.isPresent())
             throw new UsernameNotFoundException("No user found with username: " + username);

@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface RecipeRepository extends  MongoRepository<Recipe, String>{
     void deleteById(String id);
+    @Override
     List<Recipe> findAll();
     List<Recipe> findAllByPendingIsTrue();
     List<Recipe> findAllByPendingIsFalse();
