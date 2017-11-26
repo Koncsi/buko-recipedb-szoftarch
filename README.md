@@ -26,4 +26,4 @@ Just run the following:
 ```
 java -jar szoftarch-recipedb-web/target/szoftarch-recipedb-web-0.0.1-SNAPSHOT.jar 
 ```
-The app can be reached at http://localhost:8084/
+The app can be reached at localhost, port 8084
