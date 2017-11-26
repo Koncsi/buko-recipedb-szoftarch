@@ -21,20 +21,9 @@ Stop MongoDB:
 ```
 sudo service mongodb stop
 ```
-
-### Tomcat 8.x
-Ubuntu intsall:
-
-Install tomcat:
+### Start application
+Just run the following:
 ```
-sudo apt install tomcat8
+java -jar szoftarch-recipedb-web/target/szoftarch-recipedb-web-0.0.1-SNAPSHOT.jar 
 ```
-Change JDK directory(if needed):
-```
-sudo nano /etc/default/tomcat8
-```
-Create a users:
-```
-sudo nano /etc/tomcat8/tomcat-users.xml
-```
-
+The app can be reached at http://localhost:8084/
